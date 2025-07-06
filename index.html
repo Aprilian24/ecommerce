@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toko E-commerce Sederhana</title>
+    <!-- Memuat Tailwind CSS dari CDN untuk styling yang mudah dan responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Menggunakan font Inter untuk tampilan modern */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Styling kustom untuk scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Header Aplikasi -->
+        <header class="bg-blue-600 text-white p-4 shadow-md">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-bold rounded-md p-2 bg-blue-700">Toko Saya</h1>
+                <nav>
+                    <ul class="flex space-x-4">
+                        <!-- PERUBAHAN DI SINI: Mengarahkan langsung ke URL portofolio -->
+                        <li><a href="http://localhost:5173/" class="hover:text-blue-200 transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-700">Beranda</a></li>
+                        <li><a href="#" id="nav-cart" class="hover:text-blue-200 transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-700 relative">
+                            Keranjang (<span id="cart-count">0</span>)
+                            <span id="cart-badge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full hidden">0</span>
+                        </a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Konten Utama Aplikasi -->
+        <main class="container mx-auto p-6 flex-grow">
+            <!-- Halaman Produk -->
+            <section id="product-list-page" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Produk akan dimuat di sini oleh JavaScript -->
+            </section>
+
+            <!-- Halaman Keranjang -->
+            <section id="cart-page" class="hidden">
+                <h2 class="text-3xl font-bold mb-6 text-center text-blue-700">Keranjang Belanja Anda</h2>
+                <div id="cart-items" class="bg-white p-6 rounded-lg shadow-lg mb-6">
+                    <!-- Item keranjang akan dimuat di sini oleh JavaScript -->
+                    <p id="empty-cart-message" class="text-center text-gray-500 text-lg">Keranjang Anda kosong.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-between items-center bg-white p-6 rounded-lg shadow-lg">
+                    <p class="text-2xl font-bold text-gray-800 mb-4 sm:mb-0">Total: <span id="cart-total" class="text-blue-600">Rp 0</span></p>
+                    <button id="checkout-button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
+                        Lanjutkan ke Checkout
+                    </button>
+                </div>
+            </section>
+
+            <!-- Halaman Checkout -->
+            <section id="checkout-page" class="hidden max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold mb-6 text-center text-blue-700">Checkout</h2>
+                <form id="checkout-form">
+                    <div class="mb-4">
+                        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nama Lengkap:</label>
+                        <input type="text" id="name" name="name" class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" placeholder="Nama Anda" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                        <input type="email" id="email" name="email" class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" placeholder="email@example.com" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="address" class="block text-gray-700 text-sm font-bold mb-2">Alamat Pengiriman:</label>
+                        <textarea id="address" name="address" rows="4" class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" placeholder="Alamat lengkap Anda" required></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+                            Konfirmasi Pesanan
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Halaman Konfirmasi Pesanan -->
+            <section id="order-confirmation-page" class="hidden max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg text-center">
+                <h2 class="text-3xl font-bold mb-4 text-green-600">Pesanan Dikonfirmasi!</h2>
+                <p class="text-lg text-gray-700 mb-6">Terima kasih atas pesanan Anda. Detail pesanan telah dikirim ke email Anda.</p>
+                <button id="back-to-home-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+                    Kembali ke Beranda
+                </button>
+            </section>
+
+            <!-- Kotak Pesan Kustom (untuk alert) -->
+            <div id="message-box" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                    <p id="message-text" class="text-lg font-semibold mb-4"></p>
+                    <button id="message-close-button" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
+                        Oke
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Aplikasi -->
+        <footer class="bg-gray-800 text-white p-4 text-center shadow-inner mt-8">
+            <div class="container mx-auto">
+                <p>&copy; 2025 Toko Saya. Hak Cipta Dilindungi.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Data Produk (Anda bisa mengganti ini dengan data dari API jika diperlukan)
+        const products = [
+            { id: 1, name: 'T-Shirt Kasual', price: 120000, image: 'https://placehold.co/300x200/FF5733/FFFFFF?text=T-Shirt' },
+            { id: 2, name: 'Celana Jeans Slim Fit', price: 250000, image: 'https://placehold.co/300x200/33FF57/FFFFFF?text=Jeans' },
+            { id: 3, name: 'Sepatu Sneakers', price: 380000, image: 'https://placehold.co/300x200/3357FF/FFFFFF?text=Sneakers' },
+            { id: 4, name: 'Topi Baseball', price: 75000, image: 'https://placehold.co/300x200/FF33A1/FFFFFF?text=Topi' },
+            { id: 5, name: 'Hoodie Hangat', price: 200000, image: 'https://placehold.co/300x200/A133FF/FFFFFF?text=Hoodie' },
+            { id: 6, name: 'Jam Tangan Sport', price: 450000, image: 'https://placehold.co/300x200/FF8833/FFFFFF?text=Jam' },
+            { id: 7, name: 'Kacamata Hitam', price: 150000, image: 'https://placehold.co/300x200/33FF88/FFFFFF?text=Kacamata' },
+            { id: 8, name: 'Tas Ransel', price: 300000, image: 'https://placehold.co/300x200/8833FF/FFFFFF?text=Ransel' }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('ecommerceCart')) || []; // Keranjang belanja
+        let currentPage = 'product-list-page'; // Halaman yang sedang aktif
+
+        // Mengambil elemen-elemen DOM
+        const productListPage = document.getElementById('product-list-page');
+        const cartPage = document.getElementById('cart-page');
+        const checkoutPage = document.getElementById('checkout-page');
+        const orderConfirmationPage = document.getElementById('order-confirmation-page');
+
+        // const navHome = document.getElementById('nav-home'); // TIDAK DIGUNAKAN LAGI KARENA LINK LANGSUNG
+        const navCart = document.getElementById('nav-cart');
+        const cartCount = document.getElementById('cart-count');
+        const cartBadge = document.getElementById('cart-badge');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const emptyCartMessage = document.getElementById('empty-cart-message');
+        const cartTotal = document.getElementById('cart-total');
+        const checkoutButton = document.getElementById('checkout-button');
+        const checkoutForm = document.getElementById('checkout-form');
+        const backToHomeButton = document.getElementById('back-to-home-button');
+
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+        const messageCloseButton = document.getElementById('message-close-button');
+
+        // Fungsi untuk menampilkan pesan kustom (pengganti alert)
+        function showMessage(message) {
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden');
+        }
+
+        // Fungsi untuk menyembunyikan pesan kustom
+        messageCloseButton.addEventListener('click', () => {
+            messageBox.classList.add('hidden');
+        });
+
+        // Fungsi untuk memperbarui jumlah item di keranjang pada navigasi
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            if (totalItems > 0) {
+                cartBadge.textContent = totalItems;
+                cartBadge.classList.remove('hidden');
+            } else {
+                cartBadge.classList.add('hidden');
+            }
+        }
+
+        // Fungsi untuk merender daftar produk
+        function renderProducts() {
+            productListPage.innerHTML = ''; // Bersihkan daftar produk
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 ease-in-out hover:scale-105';
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">${product.name}</h3>
+                        <p class="text-gray-700 text-lg font-bold mb-4">Rp ${product.price.toLocaleString('id-ID')}</p>
+                        <button data-id="${product.id}" class="add-to-cart-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg w-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+                            Tambah ke Keranjang
+                        </button>
+                    </div>
+                `;
+                productListPage.appendChild(productCard);
+            });
+
+            // Tambahkan event listener untuk tombol "Tambah ke Keranjang"
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const productId = parseInt(e.target.dataset.id);
+                    addToCart(productId);
+                });
+            });
+        }
+
+        // Fungsi untuk menambahkan produk ke keranjang
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            localStorage.setItem('ecommerceCart', JSON.stringify(cart)); // Simpan ke localStorage
+            updateCartCount();
+            showMessage(`${product.name} telah ditambahkan ke keranjang!`);
+        }
+
+        // Fungsi untuk merender item di halaman keranjang
+        function renderCart() {
+            cartItemsContainer.innerHTML = ''; // Bersihkan item keranjang
+            if (cart.length === 0) {
+                emptyCartMessage.classList.remove('hidden');
+                checkoutButton.disabled = true;
+                cartTotal.textContent = 'Rp 0';
+            } else {
+                emptyCartMessage.classList.add('hidden');
+                checkoutButton.disabled = false;
+                let total = 0;
+                cart.forEach(item => {
+                    total += item.price * item.quantity;
+                    const cartItemDiv = document.createElement('div');
+                    cartItemDiv.className = 'flex items-center justify-between border-b border-gray-200 py-4 last:border-b-0';
+                    cartItemDiv.innerHTML = `
+                        <div class="flex items-center">
+                            <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md mr-4">
+                            <div>
+                                <h3 class="text-lg font-semibold">${item.name}</h3>
+                                <p class="text-gray-600">Rp ${item.price.toLocaleString('id-ID')}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <button data-id="${item.id}" data-action="decrease" class="cart-quantity-btn bg-gray-200 text-gray-700 px-3 py-1 rounded-md hover:bg-gray-300 transition duration-300">-</button>
+                            <span class="text-lg font-medium">${item.quantity}</span>
+                            <button data-id="${item.id}" data-action="increase" class="cart-quantity-btn bg-gray-200 text-gray-700 px-3 py-1 rounded-md hover:bg-gray-300 transition duration-300">+</button>
+                            <button data-id="${item.id}" data-action="remove" class="remove-from-cart-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition duration-300">Hapus</button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(cartItemDiv);
+                });
+                cartTotal.textContent = `Rp ${total.toLocaleString('id-ID')}`;
+
+                // Tambahkan event listener untuk tombol kuantitas dan hapus
+                document.querySelectorAll('.cart-quantity-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const productId = parseInt(e.target.dataset.id);
+                        const action = e.target.dataset.action;
+                        updateCartQuantity(productId, action);
+                    });
+                });
+                document.querySelectorAll('.remove-from-cart-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const productId = parseInt(e.target.dataset.id);
+                        removeFromCart(productId);
+                    });
+                });
+            }
+        }
+
+        // Fungsi untuk memperbarui kuantitas item di keranjang
+        function updateCartQuantity(productId, action) {
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            if (itemIndex > -1) {
+                if (action === 'increase') {
+                    cart[itemIndex].quantity++;
+                } else if (action === 'decrease') {
+                    cart[itemIndex].quantity--;
+                    if (cart[itemIndex].quantity <= 0) {
+                        cart.splice(itemIndex, 1); // Hapus jika kuantitas <= 0
+                    }
+                }
+            }
+            localStorage.setItem('ecommerceCart', JSON.stringify(cart));
+            updateCartCount();
+            renderCart(); // Render ulang keranjang setelah perubahan
+        }
+
+        // Fungsi untuk menghapus item dari keranjang
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            localStorage.setItem('ecommerceCart', JSON.stringify(cart));
+            updateCartCount();
+            renderCart(); // Render ulang keranjang setelah perubahan
+            showMessage('Produk dihapus dari keranjang.');
+        }
+
+        // Fungsi untuk mengganti halaman yang aktif
+        function showPage(pageId) {
+            productListPage.classList.add('hidden');
+            cartPage.classList.add('hidden');
+            checkoutPage.classList.add('hidden');
+            orderConfirmationPage.classList.add('hidden');
+
+            document.getElementById(pageId).classList.remove('hidden');
+            currentPage = pageId;
+
+            // Render ulang konten jika halaman keranjang atau produk
+            if (pageId === 'product-list-page') {
+                renderProducts();
+            } else if (pageId === 'cart-page') {
+                renderCart();
+            }
+        }
+
+        // Event listener untuk navigasi
+        // navHome.addEventListener('click', (e) => { // BARIS INI DIHAPUS KARENA SUDAH MENGGUNAKAN HREF LANGSUNG
+        //     e.preventDefault();
+        //     showPage('product-list-page');
+        // });
+
+        navCart.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('cart-page');
+        });
+
+        // Event listener untuk tombol checkout
+        checkoutButton.addEventListener('click', () => {
+            if (cart.length > 0) {
+                showPage('checkout-page');
+            } else {
+                showMessage('Keranjang Anda kosong. Tambahkan produk terlebih dahulu!');
+            }
+        });
+
+        // Event listener untuk form checkout
+        checkoutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Di sini Anda akan mengirim data pesanan ke backend (misalnya Laravel)
+            // Untuk demo ini, kita hanya akan menampilkan konfirmasi
+            const formData = new FormData(checkoutForm);
+            const orderDetails = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                address: formData.get('address'),
+                items: cart,
+                total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+            };
+
+            console.log('Pesanan Dikonfirmasi:', orderDetails);
+            // Reset keranjang setelah checkout
+            cart = [];
+            localStorage.removeItem('ecommerceCart');
+            updateCartCount();
+            checkoutForm.reset(); // Reset form
+
+            showPage('order-confirmation-page');
+        });
+
+        // Event listener untuk tombol kembali ke beranda dari konfirmasi
+        backToHomeButton.addEventListener('click', () => {
+            showPage('product-list-page');
+        });
+
+        // Inisialisasi aplikasi saat dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartCount();
+            renderProducts(); // Mulai dengan menampilkan daftar produk
+        });
+    </script>
+</body>
+</html>
